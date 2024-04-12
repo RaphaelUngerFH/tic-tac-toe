@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,14 +17,17 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './input-field.component.html',
   styleUrl: './input-field.component.css',
 })
-export class InputFieldComponent {
-  @Input() value?: string;
+export class InputFieldComponent implements OnInit {
   @Input() label?: string;
   @Input() isPassword = false;
   @Input() control = new FormControl();
   @Input() error?: string;
 
-  @Output() valueChange = new EventEmitter<string>();
+  @Output() blur = new EventEmitter<void>();
 
-  hide = this.isPassword;
+  hide?: boolean;
+
+  ngOnInit() {
+    this.hide = this.isPassword;
+  }
 }

@@ -1,0 +1,17 @@
+<section>
+  <h1>Login</h1>
+  <article>
+    <app-input-field
+      label="Username"
+      [control]="userNameControl"
+    ></app-input-field>
+    <app-input-field
+      label="Password"
+      [control]="passwordControl"
+      [isPassword]="true"
+    ></app-input-field>
+
+    <button mat-flat-button color="primary">Login</button>
+    <button mat-flat-button color="accent">Register</button>
+  </article>
+</section>

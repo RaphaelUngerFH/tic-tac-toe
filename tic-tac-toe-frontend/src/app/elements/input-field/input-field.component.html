@@ -7,10 +7,9 @@
   <!-- Input field -->
   <input
     matInput
-    [(ngModel)]="value"
     [type]="hide ? 'password' : 'text'"
     [formControl]="control"
-    (blur)="valueChange.emit(value)"
+    (blur)="blur.emit()"
   />
 
   <!-- Password visibility -->
