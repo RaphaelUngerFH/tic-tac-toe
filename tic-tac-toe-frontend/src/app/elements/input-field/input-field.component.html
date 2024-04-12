@@ -1,0 +1,27 @@
+<mat-form-field appearance="outline">
+  <!-- Label -->
+  @if (label) {
+  <mat-label>{{ label }}</mat-label>
+  }
+
+  <!-- Input field -->
+  <input
+    matInput
+    [(ngModel)]="value"
+    [type]="hide ? 'password' : 'text'"
+    [formControl]="control"
+    (blur)="valueChange.emit(value)"
+  />
+
+  <!-- Password visibility -->
+  @if (isPassword) {
+  <mat-icon matSuffix (click)="hide = !hide">{{
+    hide ? "visibility_off" : "visibility"
+  }}</mat-icon>
+  }
+
+  <!-- Error -->
+  @if (control.invalid && error) {
+  <mat-error>{{ error }}</mat-error>
+  }
+</mat-form-field>
