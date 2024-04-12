@@ -1,0 +1,25 @@
+<section>
+  <h1>Register</h1>
+  <article>
+    <app-input-field
+      label="Username"
+      [control]="userNameControl"
+      [error]="userNameError"
+    ></app-input-field>
+    <app-input-field
+      label="Password"
+      [control]="passwordControl"
+      [isPassword]="true"
+      [error]="passwordError"
+    ></app-input-field>
+    <app-input-field
+      label="Password confirmation"
+      [control]="passwordConfirmationControl"
+      [isPassword]="true"
+      [error]="passwordConfirmationError"
+    ></app-input-field>
+
+    <button mat-flat-button color="primary" (click)="submit()">Register</button>
+    <a mat-flat-button color="accent" href="login">Login</a>
+  </article>
+</section>

@@ -7,6 +7,12 @@ section {
 }
 
 button {
-  margin: 0 auto 1em auto;
+  margin: 2em auto 1em auto;
   display: block;
+}
+
+a {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }

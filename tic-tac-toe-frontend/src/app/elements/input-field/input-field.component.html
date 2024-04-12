@@ -20,7 +20,7 @@
   }
 
   <!-- Error -->
-  @if (control.invalid && error) {
+  @if (control.errors && error) {
   <mat-error>{{ error }}</mat-error>
   }
 </mat-form-field>

@@ -4,14 +4,16 @@
     <app-input-field
       label="Username"
       [control]="userNameControl"
+      [error]="userNameError"
     ></app-input-field>
     <app-input-field
       label="Password"
       [control]="passwordControl"
       [isPassword]="true"
+      [error]="passwordError"
     ></app-input-field>
 
-    <button mat-flat-button color="primary">Login</button>
-    <button mat-flat-button color="accent">Register</button>
+    <button mat-flat-button color="primary" (click)="submit()">Login</button>
+    <a mat-flat-button color="accent" href="register">Register</a>
   </article>
 </section>
