@@ -1,4 +1,14 @@
-<app-game-field
-  [figure]="figure"
-  (change)="fieldStateChange($event.figure, $event.isWin)"
-></app-game-field>
+<div class="container">
+  @if (isWaiting) {
+  <p>Waiting for an opponent to join the game...</p>
+  } @else if (!isWaiting && !this.winnerMsg) {
+  <app-game-field
+    [figure]="figure"
+    [reset]="resetField"
+    (change)="fieldStateChange($event.figure, $event.isWin, $event.isDraw)"
+  ></app-game-field>
+  } @else if (winnerMsg) {
+  <p>{{ winnerMsg }}</p>
+  <button mat-flat-button color="primary" (click)="newGame()">New game</button>
+  }
+</div>

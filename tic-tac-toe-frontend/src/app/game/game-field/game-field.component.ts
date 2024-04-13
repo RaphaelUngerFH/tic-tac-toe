@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Timer } from './timer';
 
 @Component({
   selector: 'app-game-field',
@@ -9,9 +10,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class GameFieldComponent implements OnInit {
   @Input() figure?: string;
+  @Input() reset = new EventEmitter<void>();
 
   // Triggered after any game field changes and if the game is won with a certain figure
-  @Output() change = new EventEmitter<{ figure: string; isWin: boolean }>();
+  @Output() change = new EventEmitter<{
+    figure: string;
+    isWin: boolean;
+    isDraw: boolean;
+  }>();
 
   // Game field
   field: (string | undefined)[][] = [
@@ -20,18 +26,37 @@ export class GameFieldComponent implements OnInit {
     [undefined, undefined, undefined],
   ];
 
+  timer = new Timer();
+
   // True, if it's the oppenent's turn
   isOpponent = false;
 
   ngOnInit() {
     // TODO listen on changes from the opponent and update the field
+
+    this.timer.start();
+
+    // Reset field
+    this.reset.subscribe((_) => {
+      this.timer.reset();
+      this.field = [
+        [undefined, undefined, undefined],
+        [undefined, undefined, undefined],
+        [undefined, undefined, undefined],
+      ];
+      this.timer.start();
+    });
   }
 
   // Set the game figure on a specific field
   set(row: number, col: number, figure?: string) {
     if (!this.field[row][col] && figure) {
       this.field[row][col] = figure;
-      this.change.emit({ figure, isWin: this.isWin(figure) });
+      const isWin = this.isWin(figure);
+      const isDraw =
+        !isWin && this.field.every((row) => row.every((item) => item));
+
+      this.change.emit({ figure, isWin, isDraw });
     }
   }
 
