@@ -1,0 +1,22 @@
+.row {
+  display: flex;
+  margin-bottom: 2px;
+}
+
+.cell {
+  display: inline-block;
+  width: 6em;
+  height: 6em;
+  border: 1px solid black;
+  margin-right: 2px;
+}
+
+.cell:not([disabled]):hover {
+  background: lightgrey;
+  cursor: pointer;
+}
+
+.cell p {
+  font-size: 28px;
+  text-align: center;
+}

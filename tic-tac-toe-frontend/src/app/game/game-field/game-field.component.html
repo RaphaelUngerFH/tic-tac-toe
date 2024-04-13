@@ -1,0 +1,13 @@
+@for (row of field; track row; let rowIdx = $index) {
+<div class="row">
+  @for (col of row; track col; let colIdx = $index) {
+  <span
+    class="cell"
+    [attr.disabled]="col || isOpponent ? '' : null"
+    (click)="set(rowIdx, colIdx, figure)"
+  >
+    <p>{{ col ?? " " }}</p>
+  </span>
+  }
+</div>
+}
