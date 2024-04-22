@@ -1,0 +1,12 @@
+### Get users
+GET http://localhost:3000/users
+
+
+### Create User
+POST http://localhost:3000/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
