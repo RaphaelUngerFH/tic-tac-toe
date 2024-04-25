@@ -3,6 +3,7 @@ import { GameFieldComponent } from './game-field/game-field.component';
 import { MatButtonModule } from '@angular/material/button';
 import { GameSocketService } from '../../services/game-socket.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-game',
@@ -25,7 +26,8 @@ export class GameComponent implements OnInit {
 
   constructor(
     private gameSocketService: GameSocketService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -65,6 +67,7 @@ export class GameComponent implements OnInit {
   // Logout from the current session
   logout() {
     this.gameSocketService.disconnect();
+    this.authService.logout();
     this.router.navigate(['login']);
   }
 }

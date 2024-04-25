@@ -5,6 +5,7 @@ import { InputFieldComponent } from '../../elements/input-field/input-field.comp
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +34,7 @@ export class LoginComponent {
   constructor(
     protected router: Router,
     protected userService: UserService,
+    protected authService: AuthService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -49,8 +51,8 @@ export class LoginComponent {
         .login(this.userNameControl.value!, this.passwordControl.value!)
         .subscribe({
           next: (res) => {
-            console.log('login: ', res);
-            this.router.navigate(['game']);
+            this.authService.login(res);
+            this.router.navigate([`game/${this.authService.getSessionId()}`]);
           },
           error: (error) => {
             this.showErrorSnackbar(error?.message);
