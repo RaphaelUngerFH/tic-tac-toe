@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class UserService {
-  private static baseUrl = 'http://localhost:3000';
+  public static baseUrl = 'http://localhost:3000';
 
   constructor(private httpClient: HttpClient) {}
 
