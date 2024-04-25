@@ -6,7 +6,7 @@
   <span
     class="cell"
     [attr.disabled]="col || isOpponent ? '' : null"
-    (click)="set(rowIdx, colIdx, figure)"
+    (click)="set(rowIdx, colIdx)"
   >
     <p>{{ col ?? " " }}</p>
   </span>

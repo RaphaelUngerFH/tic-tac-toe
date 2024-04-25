@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Timer } from './timer';
+import { GameSocketService } from '../../../services/game-socket.service';
+import { GameComponent } from '../game.component';
 
 @Component({
   selector: 'app-game-field',
@@ -9,14 +11,13 @@ import { Timer } from './timer';
   styleUrl: './game-field.component.css',
 })
 export class GameFieldComponent implements OnInit {
-  @Input() figure?: string;
+  @Input() isOpponent = false;
   @Input() reset = new EventEmitter<void>();
 
   // Triggered after any game field changes and if the game is won with a certain figure
   @Output() change = new EventEmitter<{
-    figure: string;
-    isWin: boolean;
-    isDraw: boolean;
+    isWin?: boolean;
+    isDraw?: boolean;
   }>();
 
   // Game field
@@ -28,11 +29,13 @@ export class GameFieldComponent implements OnInit {
 
   timer = new Timer();
 
-  // True, if it's the oppenent's turn
-  isOpponent = false;
+  constructor(private gameSocketService: GameSocketService) {}
 
   ngOnInit() {
-    // TODO listen on changes from the opponent and update the field
+    this.gameSocketService.listenToGameState().subscribe((res) => {
+      if (res.played !== this.gameSocketService.getId()?.toString())
+        this.setField(res.board);
+    });
 
     this.timer.start();
 
@@ -49,19 +52,45 @@ export class GameFieldComponent implements OnInit {
   }
 
   // Set the game figure on a specific field
-  set(row: number, col: number, figure?: string) {
-    if (!this.field[row][col] && figure) {
-      this.field[row][col] = figure;
-      const isWin = this.isWin(figure);
-      const isDraw =
-        !isWin && this.field.every((row) => row.every((item) => item));
-
-      this.change.emit({ figure, isWin, isDraw });
+  set(row: number, col: number) {
+    if (!this.isOpponent && !this.field[row][col]) {
+      this.field[row][col] = GameComponent.cross;
+      this.isOpponent = true;
+      this.gameSocketService.emit(row, col);
+      this.emitChange();
     }
   }
 
+  // Set the game field based on the board received from the web socket
+  private setField(board: [][]) {
+    for (let row = 0; row < board.length; row++) {
+      for (let col = 0; col < board[row].length; col++) {
+        if (board[row][col] === this.gameSocketService.getId()?.toString())
+          this.field[row][col] = GameComponent.cross;
+        else if (board[row][col] !== '')
+          this.field[row][col] = GameComponent.circle;
+      }
+    }
+
+    this.emitChange();
+    this.isOpponent = false;
+  }
+
+  // Emit if a win, lose or draw is detected
+  private emitChange() {
+    const isWin = this.isWin();
+    const isLose = this.isWin(GameComponent.circle);
+    const isDraw =
+      !isWin && !isLose && this.field.every((row) => row.every((item) => item));
+
+    this.change.emit({
+      isWin: !isWin && !isLose ? undefined : isWin || !isLose,
+      isDraw,
+    });
+  }
+
   // Check whether the current figure won the game
-  private isWin(figure: string) {
+  private isWin(figure: string = GameComponent.cross) {
     const allSame = (arr: (string | undefined)[]) =>
       arr.every((val) => val === figure);
 
