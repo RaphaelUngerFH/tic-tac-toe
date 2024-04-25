@@ -84,7 +84,7 @@ export class GameFieldComponent implements OnInit {
       !isWin && !isLose && this.field.every((row) => row.every((item) => item));
 
     this.change.emit({
-      isWin: !isWin && !isLose ? undefined : isWin || !isLose,
+      isWin: !isWin && !isLose ? undefined : isWin,
       isDraw,
     });
   }

@@ -1,4 +1,7 @@
-<p>{{ timer.getTimeStr() }}</p>
+<div id="header">
+  <span>{{ timer.getTimeStr() }}</span>
+  <span>{{ isOpponent ? "Opponent's turn" : "Your turn" }}</span>
+</div>
 
 @for (row of field; track row; let rowIdx = $index) {
 <div class="row">
