@@ -11,7 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { MoveDTO } from 'src/dto/move.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private board: string[][];
   private clients: Socket[] = [];
@@ -34,12 +34,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect() {
     console.log('User disconnected');
+    this.clients.pop();
   }
 
   handleConnection(client: Socket) {
     if (this.clients.length < 2) {
       console.log('User connected');
       this.clients.push(client);
+      this.server.emit('connectionState', this.clients.length);
     } else {
       client.emit('error', 'Game already running.');
       client.disconnect();
@@ -81,7 +83,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.board[row][col] = client.id;
       this.played = client.id;
       const winner = this.checkWinner();
-      this.server.emit('gameState', this.board, winner);
+      this.server.emit('gameState', this.board, this.played, winner);
     }
 
     console.log(this.board);
