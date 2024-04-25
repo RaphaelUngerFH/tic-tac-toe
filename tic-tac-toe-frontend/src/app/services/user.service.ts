@@ -9,6 +9,13 @@ export class UserService {
 
   constructor(private httpClient: HttpClient) {}
 
+  login(username: string, password: string) {
+    return this.httpClient.post(`${UserService.baseUrl}/login`, {
+      username,
+      password,
+    });
+  }
+
   // Register a new user
   register(username: string, password: string) {
     return this.httpClient.post(`${UserService.baseUrl}/register`, {

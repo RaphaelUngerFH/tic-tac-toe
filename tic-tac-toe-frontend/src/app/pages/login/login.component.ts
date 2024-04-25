@@ -45,7 +45,17 @@ export class LoginComponent {
     this.passwordControl.markAsTouched();
 
     if (!this.userNameError && !this.passwordError) {
-      this.router.navigate(['game']);
+      this.userService
+        .login(this.userNameControl.value!, this.passwordControl.value!)
+        .subscribe({
+          next: (res) => {
+            console.log('login: ', res);
+            this.router.navigate(['game']);
+          },
+          error: (error) => {
+            this.showErrorSnackbar(error?.message);
+          },
+        });
     }
   }
 
