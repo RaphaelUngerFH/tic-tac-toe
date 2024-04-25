@@ -34,7 +34,10 @@ export class GameComponent implements OnInit {
       // The first connected player starts
       if (this.isOpponent && connected === 1) this.isOpponent = false;
 
-      this.isWaiting = connected !== 2;
+      if (!this.isWaiting && connected !== 2)
+        // Automatically declare a player as a winner if the other one leaves
+        this.fieldStateChange(true);
+      else this.isWaiting = connected !== 2; // Wait until both players are connected
     });
   }
 
