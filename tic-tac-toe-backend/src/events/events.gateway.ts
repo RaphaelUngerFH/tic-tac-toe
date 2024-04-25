@@ -32,18 +32,19 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     ];
   }
 
-  handleDisconnect() {
-    console.log('User disconnected');
+  handleDisconnect(client: Socket) {
+    console.log('User disconnected', client.id);
     this.clients.pop();
+    this.emitConnectionState();
 
     if (this.clients.length === 0) this.initGame();
   }
 
   handleConnection(client: Socket) {
     if (this.clients.length < 2) {
-      console.log('User connected');
+      console.log('User connected', client.id);
       this.clients.push(client);
-      this.server.emit('connectionState', this.clients.length);
+      this.emitConnectionState();
     } else {
       client.emit('error', 'Game already running.');
       client.disconnect();
@@ -66,5 +67,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     console.log(this.board);
+  }
+
+  private emitConnectionState() {
+    this.server.emit('connectionState', this.clients.length);
   }
 }
