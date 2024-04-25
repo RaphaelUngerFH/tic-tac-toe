@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { GameFieldComponent } from './game-field/game-field.component';
 import { MatButtonModule } from '@angular/material/button';
 import { GameSocketService } from '../../services/game-socket.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -22,14 +23,17 @@ export class GameComponent implements OnInit {
 
   resetField = new EventEmitter<void>();
 
-  constructor(private gameSocketService: GameSocketService) {}
+  constructor(
+    private gameSocketService: GameSocketService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    this.gameSocketService.connect();
     this.gameSocketService.listenToConnectionState().subscribe((connected) => {
       // The first connected player starts
       if (this.isOpponent && connected === 1) this.isOpponent = false;
 
-      // Both players are connected
       this.isWaiting = connected !== 2;
     });
   }
@@ -53,5 +57,11 @@ export class GameComponent implements OnInit {
     this.winnerMsg = undefined;
     this.isWaiting = true;
     this.resetField.emit();
+  }
+
+  // Logout from the current session
+  logout() {
+    this.gameSocketService.disconnect();
+    this.router.navigate(['login']);
   }
 }
