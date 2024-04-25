@@ -35,6 +35,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect() {
     console.log('User disconnected');
     this.clients.pop();
+
+    if (this.clients.length === 0) this.initGame();
   }
 
   handleConnection(client: Socket) {
@@ -83,7 +85,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.board[row][col] = client.id;
       this.played = client.id;
       const winner = this.checkWinner();
-      this.server.emit('gameState', this.board, this.played, winner);
+      this.server.emit('gameState', {
+        board: this.board,
+        played: this.played,
+        winner: winner,
+      });
     }
 
     console.log(this.board);
