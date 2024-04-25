@@ -16,7 +16,12 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginComponent {
   userNameControl = new FormControl('', [Validators.required]);
-  passwordControl = new FormControl('', [Validators.required]);
+  passwordControl = new FormControl('', [
+    Validators.required,
+    Validators.pattern(
+      '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&]).{12,}'
+    ),
+  ]);
 
   userNameError?: string;
   passwordError?: string;
@@ -75,6 +80,15 @@ export class LoginComponent {
       this.passwordControl,
       'password'
     );
+
+    if (
+      !this.passwordError &&
+      this.passwordControl.errors &&
+      this.passwordControl.errors['pattern']
+    ) {
+      this.passwordError =
+        'The password needs to be at least 12 characters long and contain at least one lowercase letter, uppercase letter, digit and special character!';
+    }
   }
 
   // Show error snack bar

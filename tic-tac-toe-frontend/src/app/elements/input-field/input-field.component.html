@@ -21,6 +21,6 @@
 
   <!-- Error -->
   @if (control.errors && error) {
-  <mat-error>{{ error }}</mat-error>
+  <mat-error [title]="error">{{ error }}</mat-error>
   }
 </mat-form-field>

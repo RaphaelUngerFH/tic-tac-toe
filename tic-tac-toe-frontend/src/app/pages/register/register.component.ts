@@ -74,7 +74,6 @@ export class RegisterComponent extends LoginComponent {
   private passwordConfirmationValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       let errors = null;
-      console.log('validator', control.value);
 
       if (this.passwordControl.value !== control.value)
         errors = { notIdentical: true };
