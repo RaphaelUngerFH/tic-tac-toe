@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { InputFieldComponent } from '../elements/input-field/input-field.component';
+import { InputFieldComponent } from '../../elements/input-field/input-field.component';
 import { MatButtonModule } from '@angular/material/button';
 import {
   AbstractControl,
@@ -40,7 +40,17 @@ export class RegisterComponent extends LoginComponent {
       !this.passwordError &&
       !this.passwordConfirmationError
     ) {
-      this.router.navigate(['game']);
+      this.userService
+        .register(this.userNameControl.value!, this.passwordControl.value!)
+        .subscribe({
+          next: (res) => {
+            console.log('register: ', res);
+            this.router.navigate(['game']);
+          },
+          error: (error) => {
+            this.showErrorSnackbar(error?.message);
+          },
+        });
     }
   }
 

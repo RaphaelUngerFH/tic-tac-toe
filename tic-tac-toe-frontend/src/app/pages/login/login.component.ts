@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { InputFieldComponent } from '../elements/input-field/input-field.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { InputFieldComponent } from '../../elements/input-field/input-field.component';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +30,11 @@ export class LoginComponent {
       : undefined;
   }
 
-  constructor(protected router: Router) {}
+  constructor(
+    protected router: Router,
+    protected userService: UserService,
+    private snackBar: MatSnackBar
+  ) {}
 
   // Submit the login form
   submit() {
@@ -57,5 +63,10 @@ export class LoginComponent {
       this.passwordControl,
       'password'
     );
+  }
+
+  // Show error snack bar
+  protected showErrorSnackbar(message: string) {
+    this.snackBar.open(`Error: ${message}`, 'OK', { duration: 5000 });
   }
 }
