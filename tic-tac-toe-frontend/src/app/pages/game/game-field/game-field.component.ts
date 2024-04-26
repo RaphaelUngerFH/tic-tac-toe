@@ -11,6 +11,7 @@ import { GameComponent } from '../game.component';
   styleUrl: './game-field.component.css',
 })
 export class GameFieldComponent implements OnInit {
+  @Input() figure?: string;
   @Input() isOpponent = false;
   @Input() reset = new EventEmitter<void>();
 
@@ -54,7 +55,7 @@ export class GameFieldComponent implements OnInit {
   // Set the game figure on a specific field
   set(row: number, col: number) {
     if (!this.isOpponent && !this.field[row][col]) {
-      this.field[row][col] = GameComponent.cross;
+      this.field[row][col] = this.figure;
       this.isOpponent = true;
       this.gameSocketService.emit(row, col);
       this.emitChange();
@@ -66,9 +67,13 @@ export class GameFieldComponent implements OnInit {
     for (let row = 0; row < board.length; row++) {
       for (let col = 0; col < board[row].length; col++) {
         if (board[row][col] === this.gameSocketService.getId()?.toString())
-          this.field[row][col] = GameComponent.cross;
-        else if (board[row][col] !== '')
-          this.field[row][col] = GameComponent.circle;
+          this.field[row][col] = this.figure;
+        else if (board[row][col] !== '') {
+          this.field[row][col] =
+            this.figure === GameComponent.cross
+              ? GameComponent.circle
+              : GameComponent.cross;
+        }
       }
     }
 
@@ -78,8 +83,12 @@ export class GameFieldComponent implements OnInit {
 
   // Emit if a win, lose or draw is detected
   private emitChange() {
-    const isWin = this.isWin();
-    const isLose = this.isWin(GameComponent.circle);
+    const isWin = this.isWin(this.figure);
+    const isLose = this.isWin(
+      this.figure === GameComponent.cross
+        ? GameComponent.circle
+        : GameComponent.cross
+    );
     const isDraw =
       !isWin && !isLose && this.field.every((row) => row.every((item) => item));
 
@@ -90,7 +99,7 @@ export class GameFieldComponent implements OnInit {
   }
 
   // Check whether the current figure won the game
-  private isWin(figure: string = GameComponent.cross) {
+  private isWin(figure?: string) {
     const allSame = (arr: (string | undefined)[]) =>
       arr.every((val) => val === figure);
 
