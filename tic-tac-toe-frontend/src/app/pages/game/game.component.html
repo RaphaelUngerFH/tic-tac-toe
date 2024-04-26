@@ -7,6 +7,7 @@
   <p>Waiting for an opponent to join the game...</p>
   } @else if (!isWaiting && !this.winnerMsg) {
   <app-game-field
+    [figure]="figure"
     [isOpponent]="isOpponent"
     [reset]="resetField"
     (change)="fieldStateChange($event.isWin, $event.isDraw)"

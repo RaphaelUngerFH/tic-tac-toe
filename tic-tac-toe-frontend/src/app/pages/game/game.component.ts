@@ -16,6 +16,9 @@ export class GameComponent implements OnInit {
   static readonly cross = 'X';
   static readonly circle = 'O';
 
+  // Game figure of the current player
+  figure?: string;
+
   // Boolean variables to handle waiting and disable the game field if its the opponent's turn
   isWaiting = true;
   isOpponent = true;
@@ -33,8 +36,12 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.gameSocketService.connect();
     this.gameSocketService.listenToConnectionState().subscribe((connected) => {
-      // The first connected player starts
-      if (this.isOpponent && connected === 1) this.isOpponent = false;
+      // The first connected player starts with X
+      if (connected === 1) {
+        this.isOpponent = false;
+        this.figure = GameComponent.cross;
+      } else if (!this.figure && connected === 2)
+        this.figure = GameComponent.circle;
 
       if (!this.isWaiting && connected !== 2)
         // Automatically declare a player as a winner if the other one leaves
@@ -58,10 +65,12 @@ export class GameComponent implements OnInit {
 
   // Start a new game
   newGame() {
-    this.gameSocketService.connect();
+    this.figure = undefined;
     this.winnerMsg = undefined;
+    this.isOpponent = true;
     this.isWaiting = true;
     this.resetField.emit();
+    this.gameSocketService.connect();
   }
 
   // Logout from the current session
