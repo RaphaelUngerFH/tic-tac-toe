@@ -1,25 +1,28 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { RegisterDTO } from './dto/register.dto';
 import { User } from './models/user.model';
 import { LoginDTO } from './dto/login.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { UserDTO } from './dto/user.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('/users')
-  getUsers(): User[] {
+  getUsers(): UserDTO[] {
     return this.appService.getUsers();
   }
 
   @Post('/register')
-  register(@Body() registerDto: RegisterDTO): User {
-    return this.appService.register(registerDto);
+  async register(@Body() registerDto: RegisterDTO): Promise<User> {
+    return await this.appService.register(registerDto);
   }
 
   @Post('/login')
-  login(@Body() loginDto: LoginDTO): User {
-    return this.appService.login(loginDto);
+  async login(@Body() loginDto: LoginDTO) {
+    return await this.appService.login(loginDto);
   }
 }
