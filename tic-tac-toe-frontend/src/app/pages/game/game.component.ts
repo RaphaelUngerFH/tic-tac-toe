@@ -1,9 +1,10 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { GameFieldComponent } from './game-field/game-field.component';
 import { MatButtonModule } from '@angular/material/button';
 import { GameSocketService } from '../../services/game-socket.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -12,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './game.component.html',
   styleUrl: './game.component.css',
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   static readonly cross = 'X';
   static readonly circle = 'O';
 
@@ -27,6 +28,8 @@ export class GameComponent implements OnInit {
 
   resetField = new EventEmitter<void>();
 
+  unsubscribe = new Subject();
+
   constructor(
     private gameSocketService: GameSocketService,
     private router: Router,
@@ -35,19 +38,21 @@ export class GameComponent implements OnInit {
 
   ngOnInit() {
     this.gameSocketService.connect();
-    this.gameSocketService.listenToConnectionState().subscribe((connected) => {
-      // The first connected player starts with X
-      if (connected === 1) {
-        this.isOpponent = false;
-        this.figure = GameComponent.cross;
-      } else if (!this.figure && connected === 2)
-        this.figure = GameComponent.circle;
+    this.gameSocketService
+      .listenToConnectionState()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((connected) => {
+        // The first connected player starts with X
+        if (connected === 1) {
+          this.isOpponent = false;
+          this.figure = GameComponent.cross;
+        } else if (!this.figure && connected === 2)
+          this.figure = GameComponent.circle;
 
-      if (!this.isWaiting && connected !== 2)
         // Automatically declare a player as a winner if the other one leaves
-        this.fieldStateChange(true);
-      else this.isWaiting = connected !== 2; // Wait until both players are connected
-    });
+        if (!this.isWaiting && connected !== 2) this.fieldStateChange(true);
+        else this.isWaiting = connected !== 2; // Wait until both players are connected
+      });
   }
 
   // Called when the state of the game field changes and automatically disconnects after the game is finished
@@ -78,5 +83,10 @@ export class GameComponent implements OnInit {
     this.gameSocketService.disconnect();
     this.authService.logout();
     this.router.navigate(['login']);
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next(undefined);
+    this.unsubscribe.complete();
   }
 }
