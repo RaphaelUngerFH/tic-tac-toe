@@ -60,7 +60,7 @@ export class LoginComponent {
             this.router.navigate([`game/${this.authService.getSessionId()}`]);
           },
           error: (error) => {
-            this.showErrorSnackbar(error?.message);
+            this.showErrorSnackbar(error?.error?.message ?? error?.message);
           },
         });
     }
@@ -93,6 +93,6 @@ export class LoginComponent {
 
   // Show error snack bar
   protected showErrorSnackbar(message: string) {
-    this.snackBar.open(`Error: ${message}`, 'OK', { duration: 5000 });
+    this.snackBar.open(message, 'OK', { duration: 5000 });
   }
 }

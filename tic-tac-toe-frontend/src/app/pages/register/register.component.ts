@@ -48,7 +48,7 @@ export class RegisterComponent extends LoginComponent {
             this.router.navigate([`game/${this.authService.getSessionId()}`]);
           },
           error: (error) => {
-            this.showErrorSnackbar(error?.message);
+            this.showErrorSnackbar(error?.error?.message ?? error?.message);
           },
         });
     }
