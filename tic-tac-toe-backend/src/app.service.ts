@@ -19,7 +19,7 @@ export class AppService {
     return this.users.map((e) => UserDTO.fromEntity(e));
   }
 
-  async register(registerDto: RegisterDTO): Promise<User> {
+  async register(registerDto: RegisterDTO) {
     const userExists = this.users.find(
       (u) => u.username === registerDto.username,
     );
@@ -51,7 +51,7 @@ export class AppService {
 
     this.users.push(user);
 
-    return user;
+    return this.getAccessToken(user);
   }
 
   async login(loginDto: LoginDTO) {
@@ -69,8 +69,11 @@ export class AppService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const payload = { username: user.username };
+    return this.getAccessToken(user);
+  }
 
+  private getAccessToken(user: User) {
+    const payload = { username: user.username };
     return { user: user, accessToken: this.jwtService.sign(payload) };
   }
 }
