@@ -9,7 +9,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {
-    path: 'game/:sessionId',
+    path: 'game',
     component: GameComponent,
     canActivate: [authGuard],
   },

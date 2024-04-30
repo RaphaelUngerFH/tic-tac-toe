@@ -57,7 +57,7 @@ export class LoginComponent {
         .subscribe({
           next: (res) => {
             this.authService.login(res.accessToken);
-            this.router.navigate([`game/${this.authService.getSessionId()}`]);
+            this.router.navigate(['game']);
           },
           error: (error) => {
             this.showErrorSnackbar(error?.error?.message ?? error?.message);
