@@ -44,7 +44,7 @@ export class RegisterComponent extends LoginComponent {
         .register(this.userNameControl.value!, this.passwordControl.value!)
         .subscribe({
           next: (res) => {
-            this.authService.login(res);
+            this.authService.login(res.accessToken);
             this.router.navigate([`game/${this.authService.getSessionId()}`]);
           },
           error: (error) => {

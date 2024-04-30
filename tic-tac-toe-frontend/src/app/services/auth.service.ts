@@ -5,17 +5,18 @@ import { User } from '../dto/user';
   providedIn: 'root',
 })
 export class AuthService {
-  private user?: User;
+  private accessToken?: string;
   private isLoggedIn = false;
 
   constructor() {}
 
-  login(user: User) {
-    this.user = user;
+  login(accessToken: string) {
+    this.accessToken = accessToken;
     this.isLoggedIn = true;
   }
 
   logout() {
+    this.accessToken = undefined;
     this.isLoggedIn = false;
   }
 
@@ -26,6 +27,6 @@ export class AuthService {
 
   // Get the session id based on basic authentication
   getSessionId() {
-    return this.user ? btoa(`${this.user.username}:${this.user.password}`) : '';
+    return this.accessToken;
   }
 }
